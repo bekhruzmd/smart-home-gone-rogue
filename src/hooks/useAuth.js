@@ -10,14 +10,28 @@ export function useAuth() {
   useEffect(() => {
     if (!supabase) return undefined;
 
+    let active = true;
+    let authChanged = false;
     supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      setLoading(false);
+      if (active && !authChanged) setSession(data.session);
+    }).catch(() => {
+      if (active && !authChanged) setSession(null);
+    }).finally(() => {
+      if (active) setLoading(false);
     });
 
     // Fires on sign in, sign out and token refresh.
-    const { data } = supabase.auth.onAuthStateChange((_event, newSession) => setSession(newSession));
-    return () => data.subscription.unsubscribe();
+    const { data } = supabase.auth.onAuthStateChange((_event, newSession) => {
+      authChanged = true;
+      if (active) {
+        setSession(newSession);
+        setLoading(false);
+      }
+    });
+    return () => {
+      active = false;
+      data.subscription.unsubscribe();
+    };
   }, []);
 
   return { session, user: session?.user ?? null, loading };
