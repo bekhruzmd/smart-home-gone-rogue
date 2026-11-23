@@ -80,7 +80,8 @@ select {
   color: inherit;
 }
 
-button {
+button,
+select {
   cursor: pointer;
 }
 

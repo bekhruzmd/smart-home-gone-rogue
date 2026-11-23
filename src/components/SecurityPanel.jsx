@@ -3,6 +3,7 @@ import { ShieldCheck, ShieldAlert, ShieldOff } from 'lucide-react';
 import SafetySign from './SafetySign.jsx';
 import SystemCard from './SystemCard.jsx';
 import ActivityList from './ActivityList.jsx';
+import Select from './Select.jsx';
 
 const INTRUSION_LOCATIONS = ['Back Door', 'Front Door', 'Living Room Window', 'Garage'];
 
@@ -67,11 +68,13 @@ export default function SecurityPanel({ state, logs, actions }) {
           <label htmlFor="intrusion-location" className="sr-only">
             Simulated intrusion location
           </label>
-          <select id="intrusion-location" value={location} onChange={(e) => setLocation(e.target.value)}>
-            {INTRUSION_LOCATIONS.map((l) => (
-              <option key={l}>{l}</option>
-            ))}
-          </select>
+          <Select
+            id="intrusion-location"
+            value={location}
+            onChange={(e) => setLocation(typeof e === 'string' ? e : e.target.value)}
+            options={INTRUSION_LOCATIONS}
+            aria-label="Simulated intrusion location"
+          />
           <button type="button" className="btn btn-danger" onClick={() => actions.simulateIntrusion(location)}>
             Simulate intrusion
           </button>

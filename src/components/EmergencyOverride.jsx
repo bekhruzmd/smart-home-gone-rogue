@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { KeyRound, OctagonAlert } from 'lucide-react';
 import { EMERGENCY_REASONS, RESTORE_PHRASE } from '../lib/constants.js';
+import Select from './Select.jsx';
 
 // The original assignment's emergency override, reworked:
 //   before: a phrase + code that reset four booleans in memory.
@@ -69,11 +70,13 @@ export default function EmergencyOverride({ home, actions }) {
         <div className="override-controls">
           <label htmlFor="emergency-reason">Reason</label>
           <div className="input-row">
-            <select id="emergency-reason" value={reason} onChange={(e) => setReason(e.target.value)}>
-              {EMERGENCY_REASONS.map((r) => (
-                <option key={r}>{r}</option>
-              ))}
-            </select>
+            <Select
+              id="emergency-reason"
+              value={reason}
+              onChange={(e) => setReason(typeof e === 'string' ? e : e.target.value)}
+              options={EMERGENCY_REASONS}
+              aria-label="Reason"
+            />
             <button type="button" className="btn btn-danger" onClick={activate}>
               {confirming ? 'Confirm: activate override' : 'Activate emergency override'}
             </button>

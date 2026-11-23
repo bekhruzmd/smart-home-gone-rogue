@@ -75,3 +75,58 @@
   ::view-transition-group(nova-page), ::view-transition-old(nova-page), ::view-transition-new(nova-page) { animation: none; }
   @starting-style { .toast { transform: none; } }
 }
+
+/* Tactile dropdown chevron and menu physics:
+   The chevron bobs down on hover to invite interaction, then flips 180° with a snappy spring overshoot when open.
+   The menu drops in with physical weight, and options slide eagerly toward the cursor. */
+.select-arrow-icon {
+  transition: transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1), color 160ms var(--ease);
+}
+.select-container:not(.is-open) .select-trigger:hover:not(:disabled) .select-arrow-icon {
+  transform: translateY(2.5px);
+}
+.select-container.is-open .select-arrow-icon {
+  transform: rotate(180deg);
+}
+.select-menu {
+  transform-origin: top center;
+  animation: select-menu-spring 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes select-menu-spring {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.select-check-icon {
+  animation: select-check-pop 200ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes select-check-pop {
+  from {
+    transform: scale(0.4) rotate(-15deg);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) rotate(0);
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .select-arrow-icon,
+  .select-menu,
+  .select-check-icon {
+    transition: none !important;
+    animation: none !important;
+  }
+  .select-container:not(.is-open) .select-trigger:hover:not(:disabled) .select-arrow-icon {
+    transform: none !important;
+  }
+  .select-container.is-open .select-arrow-icon {
+    transform: rotate(180deg) !important;
+  }
+}
+
