@@ -11,6 +11,7 @@ export default function ModeSelector({ mode, disabled, onSelect }) {
         {disabled && <span className="muted small">Locked during emergency override</span>}
       </div>
       <div className="mode-grid">
+        <span className="mode-traveller" aria-hidden="true" style={{ '--mode-index': Math.max(0, MODE_LIST.findIndex((m) => m.id === mode)) }} />
         {MODE_LIST.map((m) => {
           const Icon = ICONS[m.id];
           const active = mode === m.id;

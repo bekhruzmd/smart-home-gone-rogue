@@ -1,3 +1,4 @@
+import RollingNumber from './RollingNumber.jsx';
 import { useEffect, useState } from 'react';
 import { Thermometer, Minus, Plus } from 'lucide-react';
 import SystemCard from './SystemCard.jsx';
@@ -68,7 +69,7 @@ export default function ThermostatPanel({ state, actions }) {
           <Minus size={18} />
         </button>
         <p className={`thermo-reading band-${band}`} aria-live="polite">
-          {home.target_temp}
+          <RollingNumber value={home.target_temp} />
           <span>°F</span>
         </p>
         <button

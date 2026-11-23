@@ -1,0 +1,43 @@
+/* Transitions.dev-inspired physical state changes, using Nova's sign palette. */
+.mode-grid { position: relative; isolation: isolate; }
+.mode-traveller {
+  position: absolute; inset: 0 auto 0 0; width: calc(100% / 3);
+  background: var(--mandatory); pointer-events: none; z-index: -1;
+  transform: translateX(calc(var(--mode-index) * 100%));
+  transition: transform 250ms var(--ease);
+}
+.mode-grid .mode-button { background: transparent; }
+.mode-grid .mode-button:hover:not(:disabled) { background: transparent; }
+.mode-grid .mode-button.is-active { background: transparent; }
+.mode-button svg { transition: transform 250ms var(--ease); }
+.mode-button.is-active svg { transform: rotate(-12deg); }
+.mode-grid:has(.mode-button:disabled) .mode-traveller { background: var(--g3); }
+.rolling-number { display: inline-flex; vertical-align: bottom; font-variant-numeric: tabular-nums; }
+.rolling-window { display: inline-block; height: 1.05em; width: .62em; overflow: hidden; }
+.rolling-reel { display: flex; flex-direction: column; transition: transform 250ms var(--ease); }
+.rolling-digit { display: block; height: 1.05em; line-height: 1.05; text-align: center; flex: none; }
+/* Override the original unit-label rule only within the animated reading. */
+.thermo-reading .rolling-number, .thermo-reading .rolling-number span {
+  font-size: inherit; margin: 0; letter-spacing: inherit;
+}
+.room-card { position: relative; isolation: isolate; overflow: hidden; }
+.room-card::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: #ffc20e; opacity: 0; transform: translateY(100%);
+  transition: transform 250ms var(--ease), opacity 250ms var(--ease);
+}
+.room-card.is-lit::before { transform: translateY(0); opacity: calc(var(--glow) * .12); }
+.room-icon svg { transition: transform 250ms var(--ease); }
+.room-card.is-lit .room-icon svg { transform: rotate(-8deg) scale(1.12); }
+.lock-button svg { transition: transform 160ms var(--ease); }
+.lock-button.is-unlocked svg { transform: rotate(-12deg); }
+@media (hover: hover) and (pointer: fine) {
+  .mode-button:not(:disabled):hover svg { transform: translateY(-2px) rotate(-8deg); }
+}
+@media (max-width: 760px) {
+  .mode-traveller { width: 100%; height: calc(100% / 3); transform: translateY(calc(var(--mode-index) * 100%)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mode-traveller, .mode-button svg, .rolling-reel, .room-card::before, .room-icon svg, .lock-button svg { transition: none; }
+  .mode-button.is-active svg, .room-card.is-lit .room-icon svg, .lock-button.is-unlocked svg { transform: none; }
+}

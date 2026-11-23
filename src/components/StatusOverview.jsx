@@ -1,3 +1,4 @@
+import RollingNumber from './RollingNumber.jsx';
 import { RotateCcw } from 'lucide-react';
 import SafetySign from './SafetySign.jsx';
 import { getIssues } from '../lib/homeStatus.js';
@@ -32,7 +33,7 @@ export default function StatusOverview({ state, confirmReset, onReset, onCancelR
       </div>
       <div className="placard-side">
         <p className="issue-count">
-          <b>{issues.length}</b> active {issues.length === 1 ? 'issue' : 'issues'}
+          <b><RollingNumber value={issues.length} /></b> active {issues.length === 1 ? 'issue' : 'issues'}
         </p>
         <div className="reset-box">
           <button type="button" className={`btn ${confirmReset ? 'btn-danger' : 'btn-sign'}`} onClick={onReset}>
