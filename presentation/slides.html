@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Home Gone Rogue 2.0 — Final Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --g0: #ffffff;
+      --g1: #f4f4f5;
+      --g2: #e4e4e7;
+      --g3: #a1a1aa;
+      --g4: #52525b;
+      --ink: #09090b;
+      --mandatory: #005eb8;
+      --safe: #00875a;
+      --hazard: #d97706;
+      --danger: #d7261e;
+      --font: 'Overpass', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font);
+      background: var(--ink);
+      color: var(--ink);
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+    }
+    .deck-container {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+    }
+    .slide {
+      position: absolute;
+      width: 90vw;
+      max-width: 1200px;
+      height: 82vh;
+      background: var(--g0);
+      border-radius: 12px;
+      padding: 48px 56px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.96) translateY(20px);
+      transition: opacity 300ms var(--ease), transform 300ms var(--ease);
+    }
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1) translateY(0);
+      z-index: 2;
+    }
+    .slide-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 4px 10px;
+      border-radius: 4px;
+      background: var(--g1);
+      color: var(--g4);
+      width: fit-content;
+      margin-bottom: 12px;
+    }
+    .slide-badge.blue { background: #e0f2fe; color: var(--mandatory); }
+    .slide-badge.green { background: #dcfce7; color: var(--safe); }
+    .slide-badge.red { background: #fee2e2; color: var(--danger); }
+    h1 {
+      font-size: 44px;
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    h2 {
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+      margin-bottom: 6px;
+    }
+    .subtitle {
+      font-size: 18px;
+      color: var(--g4);
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+    .content-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    /* Badges row */
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 16px 0 24px;
+    }
+    .pill {
+      font-size: 14px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 6px;
+      background: var(--g1);
+      border: 1px solid var(--g2);
+    }
+    .pill.accent {
+      background: var(--mandatory);
+      color: white;
+      border-color: var(--mandatory);
+    }
+    /* Comparison Table */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+      margin-top: 8px;
+    }
+    .compare-table th {
+      background: var(--g1);
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 800;
+      border-bottom: 2px solid var(--ink);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .compare-table td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--g2);
+      vertical-align: middle;
+      font-weight: 600;
+    }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table td:nth-child(2) { color: var(--g4); }
+    .compare-table td:nth-child(3) { color: var(--ink); font-weight: 700; background: rgba(0, 94, 184, 0.03); }
+    .badge-diff {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .badge-diff.before { background: #fef2f2; color: #b91c1c; }
+    .badge-diff.after { background: #ecfdf5; color: #047857; }
+    /* Architecture Diagram Box */
+    .arch-flow {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin: 20px 0;
+    }
+    .arch-card {
+      border: 2px solid var(--g2);
+      border-radius: 8px;
+      padding: 16px;
+      background: var(--g1);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .arch-card.highlight {
+      border-color: var(--mandatory);
+      background: #f0f7ff;
+    }
+    .arch-card h3 {
+      font-size: 16px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .arch-card p {
+      font-size: 13px;
+      color: var(--g4);
+      line-height: 1.45;
+      font-weight: 500;
+    }
+    .arch-points {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 12px;
+    }
+    .arch-point-box {
+      background: var(--g1);
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .arch-point-box b {
+      color: var(--mandatory);
+      display: block;
+      margin-bottom: 2px;
+    }
+    /* Grid 4 Highlights */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 12px;
+    }
+    .feature-box {
+      border: 2px solid var(--g2);
+      border-radius: 8px;
+      padding: 20px;
+      background: var(--g0);
+    }
+    .feature-box h3 {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .feature-box p {
+      font-size: 14px;
+      color: var(--g4);
+      line-height: 1.5;
+      font-weight: 500;
+    }
+    /* Controls Footer */
+    .deck-controls {
+      height: 60px;
+      background: #18181b;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      color: #a1a1aa;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .control-btn {
+      background: #27272a;
+      border: 1px solid #3f3f46;
+      color: white;
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-family: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s;
+    }
+    .control-btn:hover { background: #3f3f46; }
+    .control-btn:active { transform: scale(0.98); }
+    .kbd {
+      background: #3f3f46;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-family: monospace;
+    }
+    .live-demo-banner {
+      background: var(--safe);
+      color: white;
+      border-radius: 8px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 16px;
+      font-weight: 700;
+    }
+    .live-demo-banner a {
+      color: white;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 6px 14px;
+      border-radius: 4px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="deck-container">
+
+    <!-- SLIDE 1: Title & Premise -->
+    <section class="slide active" id="slide-1">
+      <div class="slide-badge blue">Final Project • Web Systems</div>
+      <h1>SMART HOME GONE ROGUE 2.0</h1>
+      <p class="subtitle">A Full-Stack, Multi-Tenant Smart Home OS with Real-Time Automation & Relational Persistence</p>
+      
+      <div class="content-area">
+        <div class="pill-row">
+          <span class="pill accent">React 19 + Vite</span>
+          <span class="pill">Supabase PostgreSQL</span>
+          <span class="pill">Row Level Security (RLS)</span>
+          <span class="pill">Deterministic Engine</span>
+          <span class="pill">27 Unit Tests (Vitest)</span>
+          <span class="pill">Vercel Production CI/CD</span>
+        </div>
+
+        <div style="background: var(--g1); padding: 20px 24px; border-radius: 8px; border-left: 4px solid var(--mandatory); margin-top: 12px;">
+          <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 6px;">The Challenge & Premise:</h3>
+          <p style="font-size: 15px; color: var(--g4); line-height: 1.5; font-weight: 500;">
+            Taking the 31-line in-memory simulation from Lecture 18 and re-engineering it into a true enterprise-grade web application. Your home has "gone rogue" with active intruders and unlocked doors — you must take back control with real, persisted rules and state.
+          </p>
+        </div>
+      </div>
+
+      <div style="font-size: 13px; color: var(--g3); font-weight: 700; margin-top: auto;">
+        Press <span class="kbd">→</span> or <span class="kbd">Space</span> for Next Slide
+      </div>
+    </section>
+
+    <!-- SLIDE 2: Option 1 - Before vs After -->
+    <section class="slide" id="slide-2">
+      <div class="slide-badge green">Option 1: Meaningful Expansion</div>
+      <h2>Evolution: Lecture 18 vs. Final Project 2.0</h2>
+      <p class="subtitle">Direct proof of development far beyond the original class submission</p>
+
+      <div class="content-area">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th style="width: 22%;">Area</th>
+              <th style="width: 36%;">Original (Lecture 18)</th>
+              <th style="width: 42%;">Version 2.0 (Final Project)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Architecture</td>
+              <td>1 file • 31 lines • In-memory</td>
+              <td><b>39 modular source files</b> across components, hooks, services</td>
+            </tr>
+            <tr>
+              <td>Data Persistence</td>
+              <td><span class="badge-diff before">None</span> (Lost on refresh)</td>
+              <td><span class="badge-diff after">Supabase PostgreSQL</span> (5 relational tables + FKs)</td>
+            </tr>
+            <tr>
+              <td>Rooms & Devices</td>
+              <td>Global whole-house on/off toggle</td>
+              <td><b>4 independent rooms</b>, 0–100% brightness, front & back locks</td>
+            </tr>
+            <tr>
+              <td>Automation Engine</td>
+              <td>Hardcoded `useState` booleans</td>
+              <td><b>Pure WHEN → THEN rule engine</b> with 6 configurable rules</td>
+            </tr>
+            <tr>
+              <td>Security & Multi-Tenancy</td>
+              <td>Hardcoded plain-text PIN in code</td>
+              <td><b>Supabase Auth</b> + strict <b>Row Level Security (RLS)</b></td>
+            </tr>
+            <tr>
+              <td>Testing & Verification</td>
+              <td>Manual click checking</td>
+              <td><b>27 automated Vitest unit tests</b> + GitHub Actions CI</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="live-demo-banner">
+          <span>Ready to see the live application in action?</span>
+          <a href="https://smart-home-gone-rogue.vercel.app" target="_blank">Switch to Live Demo ↗</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: Technical Architecture -->
+    <section class="slide" id="slide-3">
+      <div class="slide-badge blue">Technical Architecture</div>
+      <h2>System Architecture & Data Flow</h2>
+      <p class="subtitle">Deterministic state planning, optimistic UI, and defense-in-depth</p>
+
+      <div class="content-area">
+        <div class="arch-flow">
+          <div class="arch-card">
+            <h3>1. UI Layer</h3>
+            <p>React 19 components with physical micro-interactions, responsive grids, and accessibility.</p>
+          </div>
+          <div class="arch-card">
+            <h3>2. State Hook</h3>
+            <p><code>useSmartHome</code> orchestrates optimistic UI updates with honest database rollbacks.</p>
+          </div>
+          <div class="arch-card highlight">
+            <h3>3. Pure Engine</h3>
+            <p><code>automationEngine.js</code> evaluates plans with zero React/network dependencies. Tested with 27 unit tests.</p>
+          </div>
+          <div class="arch-card">
+            <h3>4. Supabase DB</h3>
+            <p>PostgreSQL 16 with Row Level Security, CHECK constraints, and transactional RPC functions.</p>
+          </div>
+        </div>
+
+        <div class="arch-points">
+          <div class="arch-point-box">
+            <b>Separation of Concerns:</b>
+            The automation engine is pure JavaScript. Given <code>(state, event)</code>, it deterministically outputs <code>(nextState, patches, logs)</code>.
+          </div>
+          <div class="arch-point-box">
+            <b>Dual-Layer Validation:</b>
+            Validates on the client in React for snappy UX, and strictly enforced on PostgreSQL via schema <code>CHECK</code> constraints.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: Engineering Highlights & Testing -->
+    <section class="slide" id="slide-4">
+      <div class="slide-badge red">Engineering Triumphs</div>
+      <h2>Highlights, Testing & Lessons Learned</h2>
+      <p class="subtitle">Solving real-world production challenges</p>
+
+      <div class="content-area">
+        <div class="feature-grid">
+          <div class="feature-box">
+            <h3>⏱️ 400ms Debounced Sliders</h3>
+            <p>Dragging sliders fires 60 events/second. Local draft state keeps 60fps UI responsive, committing a single batch write to Supabase once motion stops.</p>
+          </div>
+          <div class="feature-box">
+            <h3>🔒 Silent RLS Detection</h3>
+            <p>Blocked PostgreSQL RLS updates return 0 modified rows rather than SQL errors. Our service layer detects 0 affected rows and throws an honest UI alert.</p>
+          </div>
+          <div class="feature-box">
+            <h3>✨ Physical State Micro-Interactions</h3>
+            <p>Transitions.dev-inspired spring chevrons (180° overshoot), rolling slot-machine temperature reels, and ISO 7010 signage color tokens.</p>
+          </div>
+          <div class="feature-box">
+            <h3>🧪 27 Automated Vitest Tests</h3>
+            <p>Complete test suite runs in under 15ms. Verifies Away/Night/Home modes, intrusion simulation, emergency overrides, and issue counters.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- DECK CONTROLS -->
+  <footer class="deck-controls">
+    <div>
+      <span id="slide-counter">Slide 1 of 4</span> • <span style="color: #71717a;">Smart Home Gone Rogue 2.0</span>
+    </div>
+    <div style="display: flex; gap: 12px; align-items: center;">
+      <span>Navigate: <span class="kbd">←</span> <span class="kbd">→</span> or <span class="kbd">Space</span></span>
+      <button class="control-btn" id="prev-btn" onclick="prevSlide()">‹ Prev</button>
+      <button class="control-btn" id="next-btn" onclick="nextSlide()">Next ›</button>
+      <button class="control-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+    </div>
+  </footer>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 4;
+
+    function showSlide(index) {
+      if (index < 1 || index > totalSlides) return;
+      currentSlide = index;
+      document.querySelectorAll('.slide').forEach((s, idx) => {
+        s.classList.toggle('active', idx + 1 === currentSlide);
+      });
+      document.getElementById('slide-counter').textContent = `Slide ${currentSlide} of ${totalSlides}`;
+      document.getElementById('prev-btn').disabled = currentSlide === 1;
+      document.getElementById('next-btn').disabled = currentSlide === totalSlides;
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) showSlide(currentSlide + 1);
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) showSlide(currentSlide - 1);
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key.toLowerCase() === 'f') {
+        toggleFullscreen();
+      }
+    });
+
+    showSlide(1);
+  </script>
+</body>
+</html>
