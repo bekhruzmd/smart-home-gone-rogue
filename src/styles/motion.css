@@ -41,3 +41,37 @@
   .mode-traveller, .mode-button svg, .rolling-reel, .room-card::before, .room-icon svg, .lock-button svg { transition: none; }
   .mode-button.is-active svg, .room-card.is-lit .room-icon svg, .lock-button.is-unlocked svg { transform: none; }
 }
+
+/* Native view transitions preserve a live, immediately interactive destination. */
+.page-surface { view-transition-name: nova-page; }
+::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+::view-transition-group(nova-page) { animation-duration: 250ms; }
+::view-transition-old(nova-page) { animation: nova-page-out 160ms var(--ease) both; }
+::view-transition-new(nova-page) { animation: nova-page-in 250ms var(--ease) both; }
+::view-transition { pointer-events: none; }
+@keyframes nova-page-out { to { opacity: 0; transform: translateX(-20px); } }
+@keyframes nova-page-in { from { opacity: 0; transform: translateX(20px); } }
+/* Notices travel along the same path on entry and dismissal. */
+.toast {
+  animation: none; opacity: 1; transform: translateY(0) scale(1);
+  transition: transform 200ms var(--ease), opacity 200ms var(--ease);
+}
+@starting-style { .toast { opacity: 0; transform: translateY(20px) scale(.96); } }
+.toast.is-leaving { opacity: 0; transform: translateY(20px) scale(.96); pointer-events: none; }
+/* The all-clear sign stamps into place, then draws its check once. */
+.placard.is-safe { animation: nova-safe-stamp 280ms var(--ease); }
+.placard.is-safe .sign path, .saved-check polyline, .saved-check path {
+  stroke-dasharray: 40; stroke-dashoffset: 0;
+  animation: nova-check-draw 280ms var(--ease) both;
+}
+@keyframes nova-safe-stamp {
+  from { transform: perspective(900px) rotateX(-8deg) scale(.97); opacity: .6; }
+  to { transform: perspective(900px) rotateX(0) scale(1); opacity: 1; }
+}
+@keyframes nova-check-draw { from { stroke-dashoffset: 40; } }
+@media (prefers-reduced-motion: reduce) {
+  .placard.is-safe, .placard.is-safe .sign path, .saved-check polyline, .saved-check path { animation: none; }
+  .toast, .toast.is-leaving { transform: none; transition: opacity 150ms var(--ease); }
+  ::view-transition-group(nova-page), ::view-transition-old(nova-page), ::view-transition-new(nova-page) { animation: none; }
+  @starting-style { .toast { transform: none; } }
+}

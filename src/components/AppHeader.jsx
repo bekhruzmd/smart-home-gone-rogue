@@ -40,7 +40,7 @@ export default function AppHeader({ page, onNavigate, saving, sound, onToggleSou
 
       <div className="header-tools">
         <span className={`save-state ${saving ? 'is-saving' : ''}`} role="status" aria-live="polite">
-          {saving ? <LoaderCircle size={14} className="spin" aria-hidden="true" /> : <Check size={14} aria-hidden="true" />}
+          {saving ? <LoaderCircle size={14} className="spin" aria-hidden="true" /> : <Check size={14} className="saved-check" aria-hidden="true" />}
           {saving ? 'Saving…' : 'Saved'}
         </span>
         <button type="button" className="icon-btn" onClick={onToggleSound} aria-pressed={sound} aria-label="Alarm sound">

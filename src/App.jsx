@@ -87,7 +87,7 @@ function SmartHomeApp({ user }) {
         email={user.email}
         onSignOut={handleSignOut}
       />
-      <main className="shell">
+      <main className="shell page-surface">
         {page === 'dashboard' && <DashboardPage state={state} logs={logs} actions={actions} onNavigate={navigate} />}
         {page === 'automations' && <AutomationsPage state={state} logs={logs} actions={actions} />}
         {page === 'activity' && <ActivityPage homeId={homeId} latestLogId={logs[0]?.id} />}

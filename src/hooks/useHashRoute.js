@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
+import { flushSync } from 'react-dom';
 
-// Minimal page switching without a router library: the page name lives in the URL hash
-// (#/activity), so refreshing the browser keeps you on the same page.
 const PAGES = ['dashboard', 'automations', 'activity'];
-
 function readHash() {
   const page = window.location.hash.replace(/^#\/?/, '');
   return PAGES.includes(page) ? page : 'dashboard';
@@ -11,16 +9,31 @@ function readHash() {
 
 export function useHashRoute() {
   const [page, setPage] = useState(readHash);
-
   useEffect(() => {
-    const onChange = () => setPage(readHash());
+    let keyboard = false;
+    let transition;
+    const onKey = () => { keyboard = true; };
+    const onPointer = () => { keyboard = false; };
+    const onChange = () => {
+      const next = readHash();
+      transition?.skipTransition();
+      if (keyboard || !document.startViewTransition || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        setPage(next);
+        return;
+      }
+      transition = document.startViewTransition(() => flushSync(() => setPage(next)));
+      // Interrupted transitions are expected during rapid navigation.
+      transition.ready.catch(() => {});
+    };
+    window.addEventListener('keydown', onKey);
+    window.addEventListener('pointerdown', onPointer);
     window.addEventListener('hashchange', onChange);
-    return () => window.removeEventListener('hashchange', onChange);
+    return () => {
+      transition?.skipTransition();
+      window.removeEventListener('keydown', onKey);
+      window.removeEventListener('pointerdown', onPointer);
+      window.removeEventListener('hashchange', onChange);
+    };
   }, []);
-
-  const navigate = (next) => {
-    window.location.hash = `/${next}`;
-  };
-
-  return { page, navigate };
+  return { page, navigate: (next) => { window.location.hash = `/${next}`; } };
 }
